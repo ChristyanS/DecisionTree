@@ -19,11 +19,12 @@ iii) Mudanças realizadas usando o OpenMP estão comentadas
 
 iv) Tempos de execução:
 
-Sequencial: entre 10 e 11s
-Paralela 1 thread:
-Paralela 2 thread:
-Paralela 4 thread:
-Paralela 8 thread:
+Sequencial: real 0m10.152s user 0m9.100s sys     0m1.031s
+Paralela 1 thread: real    0m10.224s user    0m9.264s  sys     0m0.942s
+Paralela 2 thread: real    0m7.578s  user    0m12.007s sys     0m1.184s
+Paralela 4 thread: real    0m0.438s  user    0m0.235s  sys     0m0.052s
+Paralela 8 thread: real    0m8.029s  user    0m18.554s sys     0m2.638s
+Para 8 threads não foi possível executar completamente pois a operação é abortada [Aborted (core dumped)]
 
 */
 
