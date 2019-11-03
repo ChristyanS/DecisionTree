@@ -6,6 +6,27 @@
 #include <map>
 using namespace std;
 
+int threads = 4;
+
+/**
+Projeto 01 - Implementação Paralela de uma Técnica de Inteligência Artificial
+
+i) Tempo gasto para processamento no parcode, sem paralelização, usando o dataset data_final: entre 10 e 11s (real time)
+
+ii) Código aberto utilizado para a versão sequencial. Pode ser encontrado aqui: https://github.com/lucasheriques/DecisionTree
+
+iii) Mudanças realizadas usando o OpenMP estão comentadas
+
+iv) Tempos de execução:
+
+Sequencial: entre 10 e 11s
+Paralela 1 thread:
+Paralela 2 thread:
+Paralela 4 thread:
+Paralela 8 thread:
+
+*/
+
 class Table {
 	public:
 		vector<string> attrName;
@@ -16,6 +37,7 @@ class Table {
 			attrValueList.resize(attrName.size());
 			for(int j=0; j<attrName.size(); j++) {
 				map<string, int> value;
+				#pragma omp parallel for num_threads(threads)
 				for(int i=0; i<data.size(); i++) {
 					value[data[i][j]]=1;
 				}
@@ -178,6 +200,7 @@ class DecisionTree {
 			double maxAttrValue = 0.0;
 
 			// except label
+			#pragma omp parallel for num_threads(threads)
 			for(int i=0; i< initialTable.attrName.size()-1; i++) {
 				if(maxAttrValue < getGainRatio(table, i)) {
 					maxAttrValue = getGainRatio(table, i);
@@ -216,6 +239,7 @@ class DecisionTree {
 			int itemCount = (int)table.data.size();
 
 			map<string, vector<int> > attrValueMap;
+			#pragma omp parallel for num_threads(threads)
 			for(int i=0;i<table.data.size();i++) {
 				attrValueMap[table.data[i][attrIndex]].push_back(i);
 			}
@@ -243,6 +267,7 @@ class DecisionTree {
 			int itemCount = (int)table.data.size();
 
 			map<string, vector<int> > attrValueMap;
+			#pragma omp parallel for num_threads(threads)
 			for(int i=0;i<table.data.size();i++) {
 				attrValueMap[table.data[i][attrIndex]].push_back(i);
 			}
@@ -268,6 +293,7 @@ class DecisionTree {
 			if (tree[nodeIndex].isLeaf == true)
 				cout << branch << "Label: " << tree[nodeIndex].label << "\n";
 
+			#pragma omp parallel for num_threads(threads)
 			for(int i = 0; i < tree[nodeIndex].children.size(); i++) {
 				int childIndex = tree[nodeIndex].children[i];
 
@@ -337,6 +363,7 @@ class OutputPrinter {
 
 		string joinByTab(vector<string> row) {
 			string ret = "";
+			#pragma omp parallel for num_threads(threads)
 			for(int i=0; i< row.size(); i++) {
 				ret += row[i];
 				if(i != row.size() -1) {
@@ -368,6 +395,7 @@ int main(int argc, const char * argv[]) {
 	string resultFileName = argv[3];
 	OutputPrinter outputPrinter(resultFileName);
 	outputPrinter.addLine(outputPrinter.joinByTab(test.attrName));
+	#pragma omp parallel for num_threads(threads)
 	for(int i=0;i < test.data.size(); i++) {
 		vector<string> result = test.data[i];
 		result.push_back(decisionTree.guess(test.data[i]));
